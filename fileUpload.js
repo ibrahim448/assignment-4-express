@@ -12,7 +12,24 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({storage:storage}).single("file");
+const upload = multer({
+     storage:storage,
+     limits: {
+        fileSize: 1000000 // 1000000 Bytes = 1 MB
+      },
+    fileFilter:(req, file, callBack) => {
+         // upload only png and jpg format
+        if(file.mimetype === 'image/jpg'||
+          file.mimetype === 'image/png'
+        ){
+            callBack(null, true);
+        }else{
+            callBack(new Error('Only png, jpg supported!'));
+            
+        }
+    }
+
+}).single("file");
 
 app.post("/",(req,res)=>{
     upload(req,res,error=>{
